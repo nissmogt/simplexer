@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis Result</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/result.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Analysis Result</h1>
+    
+    <div class="dashboard">
+        <div class="chart-container">
+            <h2>Original Image</h2>
+            <img src="data:image/png;base64,{{ image_base64 }}" alt="Original Image">
+        </div>
+        <div class="chart-container">
+            <h2>Point Cloud</h2>
+            <canvas id="pointCloudChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <h2>Persistence Barcode</h2>
+            <canvas id="barcodeChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <h2>Persistence Diagram</h2>
+            <canvas id="diagramChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <h2>Betti Numbers</h2>
+            <canvas id="bettiChart"></canvas>
+        </div>
+    </div>
+    
+    <a href="{{ url_for('upload_file') }}" class="action-button">Analyze Another Image</a>
+
+    <script>
+        const plotData = {{ plot_data | tojson | safe }};
+
+        // Point Cloud Chart
+        new Chart(document.getElementById('pointCloudChart'), {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    data: plotData.point_cloud.map(p => ({x: p[1], y: p[0]})),
+                    pointRadius: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        reverse: true
+                    }
+                },
+                aspectRatio: 1,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        // Persistence Barcode Chart
+        new Chart(document.getElementById('barcodeChart'), {
+            type: 'bar',
+            data: {
+                datasets: plotData.barcode.map(b => ({
+                    data: [{x: [b.start, b.end], y: b.dimension}],
+                    label: `Dimension ${b.dimension}`
+                }))
+            },
+            options: {
+                indexAxis: 'y',
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom'
+                    }
+                },
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        // Persistence Diagram Chart
+        new Chart(document.getElementById('diagramChart'), {
+            type: 'scatter',
+            data: {
+                datasets: plotData.diagram.map(d => ({
+                    data: [{x: d.birth, y: d.death}],
+                    label: `Dimension ${d.dimension}`
+                }))
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom'
+                    },
+                    y: {
+                        type: 'linear',
+                        position: 'left'
+                    }
+                },
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        // Betti Numbers Chart
+        new Chart(document.getElementById('bettiChart'), {
+            type: 'bar',
+            data: {
+                labels: plotData.betti.map(b => `Dimension ${b.dimension}`),
+                datasets: [{
+                    data: plotData.betti.map(b => b.betti),
+                    label: 'Betti Number'
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+    </script>
+</body>
+</html>

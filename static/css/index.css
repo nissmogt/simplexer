@@ -1,0 +1,43 @@
+body {
+    background-color: black;
+    color: #004aad;
+    font-family: Arial, sans-serif; /* Fallback font */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    text-align: center;
+}
+
+.title {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.action-links {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+}
+
+.custom-file-upload, .analyze-link {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.custom-file-upload:hover, .analyze-link:hover {
+    color: #0066ff;
+}
+
+@media (max-width: 600px) {
+    .title {
+        font-size: 3rem;
+    }
+    
+    .action-links {
+        font-size: 0.9rem;
+    }
+}

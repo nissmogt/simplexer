@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simplexer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">simplexer</h1>
+        <div class="action-links">
+            <label for="file-upload" class="custom-file-upload">
+                upload an image,
+            </label>
+            <input id="file-upload" type="file" name="file" accept="image/*" style="display:none;">
+            <span class="analyze-link">generate a simplicial complex.</span>
+        </div>
+        <form id="upload-form" method="post" enctype="multipart/form-data" style="display:none;">
+            <input type="file" name="file" id="hidden-file-input">
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('file-upload').addEventListener('change', function() {
+            document.getElementById('hidden-file-input').files = this.files;
+            document.getElementById('upload-form').submit();
+        });
+
+        document.querySelector('.analyze-link').addEventListener('click', function() {
+            if (document.getElementById('hidden-file-input').files.length > 0) {
+                document.getElementById('upload-form').submit();
+            } else {
+                alert('Please upload an image first.');
+            }
+        });
+    </script>
+</body>
+</html>
